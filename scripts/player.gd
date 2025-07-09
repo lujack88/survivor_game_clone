@@ -40,7 +40,7 @@ func _ready() -> void:
 	add_child(garlic_weapon)
 	
 	
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	# Update global position reference for other entities
 	global_position_ref = global_position
 	
