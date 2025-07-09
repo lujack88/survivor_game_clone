@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://mbe6t0vif6tq"]
+
+[ext_resource type="Script" uid="uid://cxolqb43t772d" path="res://scripts/entityspawner.gd" id="1_bmbbe"]
+[ext_resource type="Script" uid="uid://cr4q8a1jepl5m" path="res://scripts/EntityConfig.gd" id="2_clax3"]
+[ext_resource type="Resource" uid="uid://l3mao1h8lvx8" path="res://entity configs/slime_config.tres" id="3_alpsp"]
+
+[node name="entityspawner" type="Node2D"]
+script = ExtResource("1_bmbbe")
+entity_configs = Array[ExtResource("2_clax3")]([ExtResource("3_alpsp")])
