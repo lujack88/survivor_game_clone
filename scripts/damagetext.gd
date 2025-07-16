@@ -24,13 +24,7 @@ func setup_damage_text(damage_amount: int, start_position: Vector2, color: Color
 	# Set color
 	modulate = color
 	
-	# Set font size based on damage (optional)
-	if damage_amount > 50:
-		add_theme_font_size_override("font_size", 24)
-	elif damage_amount > 20:
-		add_theme_font_size_override("font_size", 20)
-	else:
-		add_theme_font_size_override("font_size", 16)
+	add_theme_font_size_override("font_size", 12)
 
 func animate_damage_text():
 	var tween = create_tween()

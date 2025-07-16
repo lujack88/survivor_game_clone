@@ -13,6 +13,10 @@ static var global_position_ref: Vector2
 @export var health = 100
 @export var max_health = 100
 
+
+# Damage text variables
+var damage_text_scene = preload("res://scripts/damagetext.gd")
+
 # HP Bar variables
 var hp_bar_background: ColorRect
 var hp_bar_fill: ColorRect
@@ -103,10 +107,25 @@ func update_animation(direction: Vector2) -> void:
 func take_damage(incoming_damage) -> void:
 	health -= incoming_damage 
 	update_hp_bar()
+	
+	# Create damage text
+	show_damage_text(incoming_damage)
+	
 	print("Player health: ", health)
 	if health <= 0:
 		die()
 
+# Show Damage func
+func show_damage_text(damage_amount: int):
+	# Create the damage text instance
+	var damage_text = Label.new()
+	damage_text.set_script(damage_text_scene)
+	
+	get_parent().add_child(damage_text)
+	# Damage text color
+	var text_position = global_position + Vector2(randf_range(-15, 15), -30)
+	damage_text.setup_damage_text(damage_amount, text_position, Color.RED)
+	
 func create_hp_bar():
 	# Create main container for the HP bar
 	hp_bar_container = Control.new()
