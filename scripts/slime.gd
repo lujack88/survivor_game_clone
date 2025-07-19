@@ -12,6 +12,7 @@ const IDLE_THRESHOLD = 5.0
 @onready var player := $"../Player"
 
 # Health system
+var damage_text_scene = preload("res://scripts/damagetext.gd")
 @export var health = 30
 @export var max_health = 30
 var hp_bar_background: ColorRect
@@ -69,11 +70,19 @@ func attack_player() -> void:
 		# Start cooldown
 		can_attack = false
 		attack_timer = cooldown
-
+		
+func show_damage_text(damage_amount: int):
+	var damage_text = Label.new()
+	damage_text.set_script(damage_text_scene)
+	get_parent().add_child(damage_text)
+	var text_position = global_position + Vector2(randf_range(-15, 15), -30)
+	damage_text.setup_damage_text(damage_amount, text_position, Color.ORANGE)
+	
 func take_damage(incoming_damage: int) -> void:
 	health -= incoming_damage
 	update_hp_bar()
 	print("Slime took ", incoming_damage, " damage. Health: ", health)
+	show_damage_text(incoming_damage)
 	
 	if health <= 0:
 		die()
