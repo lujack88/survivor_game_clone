@@ -22,19 +22,38 @@ var hp_bar_background: ColorRect
 var hp_bar_fill: ColorRect
 var hp_bar_container: Control
 
+# Level System
+var level_system: LevelSystem
+
 # Damage radius visualization
 var damage_radius_circle: Control
 
 # Player state
 var last_direction := Vector2.DOWN  # Default facing down
 
+# Function to get last direction for weapons
+func get_last_direction() -> Vector2:
+	return last_direction
+
+func give_xp(amount: int):
+	if level_system:
+		level_system.add_xp(amount)
+
 # Damage tracking for enemies
 var damaged_enemies = {}  # Dictionary to track damage timers for each enemy
 
 func _ready() -> void:
+	# Add player to group for weapons to find
+	add_to_group("player")
+	
 	create_hp_bar()
 	update_hp_bar()
 	#create_damage_radius_circle()
+	
+	# Create level system
+	level_system = LevelSystem.new()
+	add_child(level_system)
+	
 	# Setup animation
 	if animated_sprite:
 		animated_sprite.play()
@@ -43,10 +62,19 @@ func _ready() -> void:
 	garlic_weapon.set_script(load("res://scripts/garlic.gd"))
 	add_child(garlic_weapon)
 	
+	# Create and add projectile weapon
+	var projectile_weapon = Node2D.new()
+	projectile_weapon.set_script(load("res://scripts/projectile_weapon.gd"))
+	add_child(projectile_weapon)
+	
 	
 func _physics_process(_delta: float) -> void:
 	# Update global position reference for other entities
 	global_position_ref = global_position
+	
+	# Update XP bar position
+	if level_system:
+		level_system.update_xp_bar_position()
 	
 	# Get input vector
 	var input_vector := Vector2(

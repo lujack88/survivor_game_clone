@@ -117,6 +117,11 @@ func update_hp_bar():
 func die():
 	print("Slime died!")
 	
+	# Give XP to player
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("give_xp"):
+		player.give_xp(5)  # 5 XP per slime kill
+	
 	# Optional: Drop items, play death animation, etc.
 	# $AnimationPlayer.play("death")  # if you have death animation
 	# spawn_loot()  # if you want to drop items
