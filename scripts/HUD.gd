@@ -8,17 +8,32 @@ class_name HUD
 @onready var xp_fill: ColorRect = $XPBar/XPFill
 @onready var xp_label: Label = $XPBar/XPLabel
 @onready var level_label: Label = $LevelLabel
+@onready var slime_counter_label: Label = $TopCounters/SlimeKillCounter
+@onready var time_counter_label: Label = $TopCounters/TimeCounter
 
 # Player reference
 var player: Player
 var level_system: LevelSystem
 
+# Counter variables
+var slime_kill_count: int = 0
+var game_start_time: float = 0.0
+
 func _ready():
+	# Add to HUD group for easy access
+	add_to_group("hud")
+
+	# Initialize game start time
+	game_start_time = Time.get_ticks_msec() / 1000.0
+
 	# Defer the connection to ensure everything is ready
 	call_deferred("_connect_to_systems")
 
 	# Set initial visibility
 	visible = true
+
+func _process(_delta):
+	update_time_display()
 
 func _connect_to_systems():
 	# Find the player in the scene
@@ -136,3 +151,28 @@ func set_xp_progress(progress: float):
 func set_level(level: int):
 	if level_label:
 		level_label.text = "Level " + str(level)
+
+# Counter update functions
+func update_time_display():
+	if not time_counter_label:
+		return
+
+	var elapsed_time = (Time.get_ticks_msec() / 1000.0) - game_start_time
+	var total_seconds = int(elapsed_time)
+	var minutes = total_seconds / 60
+	var seconds = total_seconds % 60
+
+	time_counter_label.text = "Time elapsed: %02d:%02d" % [minutes, seconds]
+
+func increment_slime_kill():
+	slime_kill_count += 1
+	update_slime_counter()
+
+func update_slime_counter():
+	if slime_counter_label:
+		slime_counter_label.text = "Slimes Killed: " + str(slime_kill_count)
+
+# Called when an enemy is killed
+func on_enemy_killed(enemy_type: String):
+	if enemy_type.to_lower().contains("slime"):
+		increment_slime_kill()

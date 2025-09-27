@@ -117,6 +117,11 @@ func update_hp_bar():
 		hp_bar_fill.size.x = 50 * health_percentage
 
 func die():
+	# Notify HUD about slime kill
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_method("on_enemy_killed"):
+		hud.on_enemy_killed("slime")
+
 	# Drop XP orb
 	drop_xp_orb()
 
