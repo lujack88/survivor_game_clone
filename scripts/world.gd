@@ -2,7 +2,8 @@ extends Node2D
 
 # Spawner configuration
 @export var slime_scene: PackedScene = preload("res://scenes/slime.tscn")
-@export var spawn_interval: float = 2.0
+@export var spawn_interval: float = 0.1
+@export var slimes_per_spawn: int = 5
 @export var min_spawn_distance: float = 40
 @export var max_spawn_distance: float = 75
 @onready var trees: TileMapLayer = $trees
@@ -11,8 +12,9 @@ extends Node2D
 var spawn_timer: Timer
 
 func _ready():
-	setup_spawner()
-	
+	# Spawning now handled by EntitySpawner node
+	# setup_spawner()
+	pass
 
 func setup_spawner():
 	# Create and configure the spawn timer
@@ -23,10 +25,12 @@ func setup_spawner():
 	add_child(spawn_timer)
 
 func _on_spawn_timer_timeout():
-	var slime = slime_scene.instantiate()
-	slime.global_position = get_spawn_position_around_player()
-	# This adds slime as a direct child to the current scene.
-	trees.add_child(slime)
+	# Spawn multiple slimes at once
+	for i in range(slimes_per_spawn):
+		var slime = slime_scene.instantiate()
+		slime.global_position = get_spawn_position_around_player()
+		# This adds slime as a direct child to the current scene.
+		trees.add_child(slime)
 
 func get_spawn_position_around_player() -> Vector2:
 	var player_pos = Player.global_position_ref

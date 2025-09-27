@@ -96,34 +96,39 @@ func show_level_up_effect():
 	tween.tween_callback(level_text.queue_free)
 
 func create_xp_bar():
+	# Get the player node to attach XP bar to
+	var player = get_parent()  # LevelSystem is a child of player
+	if not player:
+		return
+
 	# Create main container for the XP bar
 	xp_bar_container = Control.new()
 	xp_bar_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 	xp_bar_container.position = Vector2(-50, -60)  # Position above HP bar
 	xp_bar_container.size = Vector2(100, 8)
-	get_tree().current_scene.add_child.call_deferred(xp_bar_container)
-	
+	player.add_child(xp_bar_container)
+
 	# Create background (dark for unfilled XP)
 	xp_bar_background = ColorRect.new()
 	xp_bar_background.color = Color(0.2, 0.2, 0.2, 0.8)
 	xp_bar_background.size = Vector2(100, 8)
 	xp_bar_background.position = Vector2.ZERO
 	xp_bar_container.add_child(xp_bar_background)
-	
+
 	# Create foreground (blue for current XP)
 	xp_bar_fill = ColorRect.new()
 	xp_bar_fill.color = Color(0.2, 0.6, 1.0, 0.9)
 	xp_bar_fill.size = Vector2(100, 8)
 	xp_bar_fill.position = Vector2.ZERO
 	xp_bar_container.add_child(xp_bar_fill)
-	
+
 	# Create XP text
 	xp_text = Label.new()
 	xp_text.text = "XP: " + str(current_xp) + " / " + str(get_xp_for_next_level())
 	xp_text.position = Vector2(-50, -75)
 	xp_text.add_theme_font_size_override("font_size", 12)
 	xp_text.modulate = Color.WHITE
-	get_tree().current_scene.add_child.call_deferred(xp_text)
+	player.add_child(xp_text)
 
 func update_xp_bar():
 	if not xp_bar_fill or not xp_text:
@@ -139,10 +144,3 @@ func update_xp_bar():
 		xp_text.text = "XP: " + str(current_xp) + " (MAX LEVEL)"
 	else:
 		xp_text.text = "XP: " + str(current_xp) + " / " + str(next_level_xp)
-
-func update_xp_bar_position():
-	# Keep XP bar above player
-	if xp_bar_container and xp_text:
-		var player_pos = Player.global_position_ref
-		xp_bar_container.position = player_pos + Vector2(-50, -60)
-		xp_text.position = player_pos + Vector2(-50, -75)

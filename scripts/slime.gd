@@ -9,7 +9,7 @@ const IDLE_THRESHOLD = 5.0
 @export var damage = 5
 @export var cooldown = 1
 @export var attack_radius = 20
-@onready var player := $"../Player"
+# Player reference - will be set in _ready()
 
 # Health system
 var damage_text_scene = preload("res://scripts/damagetext.gd")
@@ -64,9 +64,12 @@ func _physics_process(delta: float) -> void:
 	
 func attack_player() -> void:
 	if can_attack:
-		# Deal damage to player
-		player.take_damage(damage)
-		
+		# Get player node
+		var player = get_tree().get_first_node_in_group("player")
+		if player and player.has_method("take_damage"):
+			# Deal damage to player
+			player.take_damage(damage)
+
 		# Start cooldown
 		can_attack = false
 		attack_timer = cooldown
@@ -81,7 +84,6 @@ func show_damage_text(damage_amount: int):
 func take_damage(incoming_damage: int) -> void:
 	health -= incoming_damage
 	update_hp_bar()
-	print("Slime took ", incoming_damage, " damage. Health: ", health)
 	show_damage_text(incoming_damage)
 	
 	if health <= 0:

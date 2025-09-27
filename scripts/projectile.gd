@@ -49,16 +49,13 @@ func _physics_process(_delta):
 	# Check for collisions with enemies
 	var collision_count = get_slide_collision_count()
 	if collision_count > 0:
-		print("Projectile collision detected! Count: ", collision_count)
 		
 		for i in collision_count:
 			var collision = get_slide_collision(i)
 			var body = collision.get_collider()
-			print("Collided with: ", body.name, " - has take_damage: ", body.has_method("take_damage"))
 			
 			# Check if it's an enemy (has take_damage function)
 			if body.has_method("take_damage"):
-				print("Projectile hit: ", body.name, " - dealing ", damage, " damage")
 				# Deal damage (convert to int for slime compatibility)
 				body.take_damage(int(damage))
 				
@@ -76,7 +73,6 @@ func setup_projectile(start_position: Vector2, shoot_direction: Vector2):
 	# Rotate projectile to face direction
 	rotation = direction.angle()
 	
-	print("Projectile created at: ", start_position, " direction: ", direction)
 
 func show_damage_text(damage_amount: float):
 	var damage_text = Label.new()

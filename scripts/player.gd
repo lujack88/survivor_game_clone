@@ -61,7 +61,7 @@ func _ready() -> void:
 	var garlic_weapon = Node2D.new()
 	garlic_weapon.set_script(load("res://scripts/garlic.gd"))
 	add_child(garlic_weapon)
-	
+
 	# Create and add projectile weapon
 	var projectile_weapon = Node2D.new()
 	projectile_weapon.set_script(load("res://scripts/projectile_weapon.gd"))
@@ -72,9 +72,6 @@ func _physics_process(_delta: float) -> void:
 	# Update global position reference for other entities
 	global_position_ref = global_position
 	
-	# Update XP bar position
-	if level_system:
-		level_system.update_xp_bar_position()
 	
 	# Get input vector
 	var input_vector := Vector2(

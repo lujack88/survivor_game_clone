@@ -2,8 +2,9 @@ extends Node2D
 
 # Weapon properties
 @export var damage: float = 15.0
-@export var cooldown: float = 0.5
-@export var projectile_speed: float = 400.0
+@export var cooldown: float = 1.0  # Changed to 1 second for auto-fire
+@export var projectile_speed: float = 300.0
+@export var auto_target_range: float = 300.0  # Range for auto-targeting
 
 # Internal variables
 var fire_timer: Timer
@@ -15,17 +16,75 @@ func _ready():
 	fire_timer.wait_time = cooldown
 	fire_timer.timeout.connect(_on_fire_timer_timeout)
 	add_child(fire_timer)
+	
+	# Start auto-firing
+	fire_timer.start()
 
 func _process(_delta):
-	# Check for fire input (spacebar)
-	if Input.is_action_just_pressed("ui_accept") and can_fire:
-		fire_projectile()
+	# Auto-fire at closest enemy if ready
+	if can_fire:
+		var target_enemy = find_closest_enemy()
+		if target_enemy:
+			fire_at_target(target_enemy)
 
+func find_closest_enemy():
+	# Get all enemies in the scene - now supports multiple enemy types dynamically
+	var enemies = []
+	enemies.append_array(get_tree().get_nodes_in_group("slimes"))
+	# Future enemy types can be added here:
+	# enemies.append_array(get_tree().get_nodes_in_group("skeletons"))
+	# enemies.append_array(get_tree().get_nodes_in_group("bosses"))
+	
+	if enemies.is_empty():
+		return null
+	
+	var player_pos = Player.global_position_ref
+	var closest_enemy = null
+	var closest_distance = auto_target_range
+	
+	# Find the closest enemy within range
+	for enemy in enemies:
+		if enemy and is_instance_valid(enemy):  # Check if enemy still exists
+			var distance = player_pos.distance_to(enemy.global_position)
+			if distance < closest_distance:
+				closest_distance = distance
+				closest_enemy = enemy
+	
+	return closest_enemy
+
+func fire_at_target(target_enemy):
+	if not can_fire or not target_enemy:
+		return
+	
+	print("Auto-firing at target: ", target_enemy.name)
+	
+	# Get player's position and direction to target
+	var player_pos = Player.global_position_ref
+	var direction_to_target = (target_enemy.global_position - player_pos).normalized()
+	
+	# Create projectile
+	var projectile_scene = preload("res://scripts/projectile.gd")
+	var projectile = CharacterBody2D.new()
+	projectile.set_script(projectile_scene)
+	
+	# Add to scene
+	get_tree().current_scene.add_child(projectile)
+	
+	# Setup projectile
+	projectile.setup_projectile(player_pos, direction_to_target)
+	projectile.damage = damage
+	projectile.speed = projectile_speed
+	
+	# Start cooldown
+	can_fire = false
+	fire_timer.start()
+
+# Legacy function for manual firing (kept for compatibility)
 func fire_projectile():
 	if not can_fire:
 		return
 	
-	print("Firing projectile!")
+	print("Manual firing projectile!")
 	
 	# Get player's position and direction
 	var player_pos = Player.global_position_ref
