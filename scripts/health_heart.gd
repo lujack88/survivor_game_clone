@@ -16,7 +16,7 @@ var tween: Tween
 
 # Movement and animation
 var is_attracted: bool = false
-var attraction_speed: float = 200.0
+var attraction_speed: float = 300.0
 var base_y_position: float
 var heart_scale: float = 0.5
 
