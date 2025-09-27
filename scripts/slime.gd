@@ -117,17 +117,26 @@ func update_hp_bar():
 		hp_bar_fill.size.x = 50 * health_percentage
 
 func die():
-	# Give XP to player
-	var player_node = get_tree().get_first_node_in_group("player")
-	if player_node and player_node.has_method("give_xp"):
-		player_node.give_xp(5)  # 5 XP per slime kill
-	
+	# Drop XP orb
+	drop_xp_orb()
+
 	# Optional: Drop items, play death animation, etc.
 	# $AnimationPlayer.play("death")  # if you have death animation
 	# spawn_loot()  # if you want to drop items
-	
+
 	# Remove the slime from the scene
 	queue_free()
+
+func drop_xp_orb():
+	# Create XP orb
+	var xp_orb = Area2D.new()
+	xp_orb.set_script(load("res://scripts/xp_orb.gd"))
+
+	# Position orb at slime's location
+	xp_orb.global_position = global_position
+
+	# Add to scene
+	get_parent().add_child(xp_orb)
 
 func update_animation(direction: Vector2) -> void:
 	if not animated_sprite:
