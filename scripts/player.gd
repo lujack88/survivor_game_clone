@@ -17,10 +17,8 @@ static var global_position_ref: Vector2
 # Damage text variables
 var damage_text_scene = preload("res://scripts/damagetext.gd")
 
-# HP Bar variables
-var hp_bar_background: ColorRect
-var hp_bar_fill: ColorRect
-var hp_bar_container: Control
+# Signals for HUD
+signal health_changed(current_health: int, max_health: int)
 
 # Level System
 var level_system: LevelSystem
@@ -46,12 +44,12 @@ func _ready() -> void:
 	# Add player to group for weapons to find
 	add_to_group("player")
 	
-	create_hp_bar()
-	update_hp_bar()
-	#create_damage_radius_circle()
+	# Emit initial health signal
+	health_changed.emit(health, max_health)
 	
 	# Create level system
 	level_system = LevelSystem.new()
+	level_system.name = "LevelSystem"
 	add_child(level_system)
 	
 	# Setup animation
@@ -131,12 +129,11 @@ func update_animation(direction: Vector2) -> void:
 
 func take_damage(incoming_damage) -> void:
 	health -= incoming_damage 
-	update_hp_bar()
+	health_changed.emit(health, max_health)
 	
 	# Create damage text
 	show_damage_text(incoming_damage)
 	
-	print("Player health: ", health)
 	if health <= 0:
 		die()
 
@@ -151,32 +148,7 @@ func show_damage_text(damage_amount: int):
 	var text_position = global_position + Vector2(randf_range(-15, 15), -30)
 	damage_text.setup_damage_text(damage_amount, text_position, Color.RED)
 	
-func create_hp_bar():
-	# Create main container for the HP bar
-	hp_bar_container = Control.new()
-	hp_bar_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	hp_bar_container.position = Vector2(-25, -40)  # Position above sprite
-	hp_bar_container.size = Vector2(50, 6)
-	add_child(hp_bar_container)
-	
-	# Create background (red for lost health)
-	hp_bar_background = ColorRect.new()
-	hp_bar_background.color = Color.RED
-	hp_bar_background.size = Vector2(50, 6)
-	hp_bar_background.position = Vector2.ZERO
-	hp_bar_container.add_child(hp_bar_background)
-	
-	# Create foreground (green for current health)
-	hp_bar_fill = ColorRect.new()
-	hp_bar_fill.color = Color.GREEN
-	hp_bar_fill.size = Vector2(50, 6)
-	hp_bar_fill.position = Vector2.ZERO
-	hp_bar_container.add_child(hp_bar_fill)
-
-func update_hp_bar():
-	if hp_bar_fill:
-		var health_percentage = float(health) / float(max_health)
-		hp_bar_fill.size.x = 50 * health_percentage
+# Health bar functions removed - now handled by HUD
 
 func die():
 	print("Player died!")
@@ -189,9 +161,7 @@ func die():
 	set_physics_process(false)
 	set_process_input(false)
 	
-	# Hide HP bar
-	if hp_bar_container:
-		hp_bar_container.visible = false
+	# HP bar is now handled by HUD
 	# Wait a moment then restart or show game over
 	await get_tree().create_timer(2.0).timeout
 	

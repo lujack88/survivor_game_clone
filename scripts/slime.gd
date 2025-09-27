@@ -117,8 +117,6 @@ func update_hp_bar():
 		hp_bar_fill.size.x = 50 * health_percentage
 
 func die():
-	print("Slime died!")
-	
 	# Give XP to player
 	var player_node = get_tree().get_first_node_in_group("player")
 	if player_node and player_node.has_method("give_xp"):
@@ -130,7 +128,7 @@ func die():
 	
 	# Remove the slime from the scene
 	queue_free()
-			
+
 func update_animation(direction: Vector2) -> void:
 	if not animated_sprite:
 		return

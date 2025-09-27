@@ -56,8 +56,6 @@ func fire_at_target(target_enemy):
 	if not can_fire or not target_enemy:
 		return
 	
-	print("Auto-firing at target: ", target_enemy.name)
-	
 	# Get player's position and direction to target
 	var player_pos = Player.global_position_ref
 	var direction_to_target = (target_enemy.global_position - player_pos).normalized()
@@ -84,13 +82,9 @@ func fire_projectile():
 	if not can_fire:
 		return
 	
-	print("Manual firing projectile!")
-	
 	# Get player's position and direction
 	var player_pos = Player.global_position_ref
 	var player_direction = get_player_direction()
-	
-	print("Player pos: ", player_pos, " direction: ", player_direction)
 	
 	# Create projectile
 	var projectile_scene = preload("res://scripts/projectile.gd")

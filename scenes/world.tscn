@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=4 uid="uid://bvgsrk0w52jw3"]
+[gd_scene load_steps=11 format=4 uid="uid://bvgsrk0w52jw3"]
 
 [ext_resource type="Texture2D" uid="uid://w58kjbdfs8ka" path="res://assets/sprites/tilesets/plains.png" id="1_nnsk1"]
 [ext_resource type="Script" uid="uid://60si6ucpvv58" path="res://scripts/world.gd" id="1_qfnet"]
 [ext_resource type="Texture2D" uid="uid://byiaw74qu0mh1" path="res://assets/sprites/objects/objects.png" id="2_rwgxs"]
 [ext_resource type="PackedScene" uid="uid://co1l73glkkfas" path="res://scenes/player.tscn" id="3_4wyf3"]
 [ext_resource type="Script" uid="uid://cxolqb43t772d" path="res://scripts/entityspawner.gd" id="4_spawner"]
+[ext_resource type="PackedScene" uid="uid://citi44nhbxj1e" path="res://scenes/HUD.tscn" id="5_hud"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rwgxs"]
 texture = ExtResource("1_nnsk1")
@@ -289,3 +290,5 @@ position = Vector2(-53, 16)
 
 [node name="EntitySpawner" type="Node2D" parent="."]
 script = ExtResource("4_spawner")
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]
