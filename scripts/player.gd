@@ -23,6 +23,9 @@ signal health_changed(current_health: int, max_health: int)
 # Level System
 var level_system: LevelSystem
 
+# Player Stats System
+var player_stats: PlayerStats
+
 # Damage radius visualization
 var damage_radius_circle: Control
 
@@ -41,9 +44,12 @@ func give_xp(amount: int):
 var damaged_enemies = {}  # Dictionary to track damage timers for each enemy
 
 func _ready() -> void:
+	# Set pause mode to stop processing when game is paused
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+
 	# Add player to group for weapons to find
 	add_to_group("player")
-	
+
 	# Emit initial health signal
 	health_changed.emit(health, max_health)
 	
@@ -51,6 +57,15 @@ func _ready() -> void:
 	level_system = LevelSystem.new()
 	level_system.name = "LevelSystem"
 	add_child(level_system)
+
+	# Create player stats system
+	player_stats = PlayerStats.new()
+	player_stats.name = "PlayerStats"
+	add_child(player_stats)
+
+	# Connect stats changed signal to update max health
+	player_stats.stats_changed.connect(_on_stats_changed)
+	player_stats.max_hp_increased.connect(_on_max_hp_increased)
 	
 	# Setup animation
 	if animated_sprite:
@@ -128,12 +143,19 @@ func update_animation(direction: Vector2) -> void:
 			animated_sprite.flip_h = false
 
 func take_damage(incoming_damage) -> void:
-	health -= incoming_damage 
+	# Apply armor reduction if stats system exists
+	var final_damage = incoming_damage
+	if player_stats:
+		var armor_reduction = player_stats.get_armor_reduction()
+		final_damage = int(incoming_damage * (1.0 - armor_reduction))
+		final_damage = max(1, final_damage)  # Ensure at least 1 damage
+
+	health -= final_damage
 	health_changed.emit(health, max_health)
-	
+
 	# Create damage text
-	show_damage_text(incoming_damage)
-	
+	show_damage_text(final_damage)
+
 	if health <= 0:
 		die()
 
@@ -167,3 +189,34 @@ func die():
 	
 	# Choose one of these options:
 	get_tree().reload_current_scene()  # Restart level
+
+# Called when player stats change
+func _on_stats_changed():
+	if player_stats:
+		# Update max health based on stats
+		var base_max_health = 100  # Store original max health
+		max_health = int(base_max_health * player_stats.get_max_hp_multiplier())
+
+		# Ensure current health doesn't exceed new max
+		health = min(health, max_health)
+
+		# Emit health changed signal
+		health_changed.emit(health, max_health)
+
+# Called when max HP increases to heal the player
+func _on_max_hp_increased(hp_increase: int):
+	if player_stats:
+		# Update max health based on stats
+		var base_max_health = 100  # Store original max health
+		max_health = int(base_max_health * player_stats.get_max_hp_multiplier())
+
+		# Heal the player by the HP increase amount
+		health += hp_increase
+
+		# Ensure current health doesn't exceed new max
+		health = min(health, max_health)
+
+		# Emit health changed signal
+		health_changed.emit(health, max_health)
+
+		print("Max HP increased by ", hp_increase, "! Current health: ", health, "/", max_health)

@@ -11,6 +11,9 @@ var area_2d: Area2D
 var collision_shape: CollisionShape2D
 var circle_shape: CircleShape2D
 func _ready():
+	# Set pause mode to stop processing when game is paused
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+
 	# Create the Area2D for detection
 	area_2d = Area2D.new()
 	add_child(area_2d)
@@ -28,10 +31,12 @@ func _ready():
 	
 	# Create and configure the damage timer
 	damage_timer = Timer.new()
-	damage_timer.wait_time = cooldown
 	damage_timer.timeout.connect(_on_damage_timer_timeout)
 	damage_timer.autostart = true
 	add_child(damage_timer)
+
+	# Set initial cooldown with attack speed consideration
+	update_attack_speed()
 	
 	# Update radius
 	circle_shape.radius = radius
@@ -50,8 +55,27 @@ func _draw():
 func _on_damage_timer_timeout():
 	# Get all mobs currently in the area
 	var bodies_in_area = area_2d.get_overlapping_bodies()
-	
+
+	# Get player stats for damage multiplier
+	var player = get_tree().get_first_node_in_group("player")
+	var damage_multiplier = 1.0
+	if player and player.get_node_or_null("PlayerStats"):
+		damage_multiplier = player.get_node("PlayerStats").get_damage_multiplier()
+
+	# Calculate final damage
+	var final_damage = dmg * damage_multiplier
+
 	# Damage each mob
 	for body in bodies_in_area:
-		body.take_damage(dmg)
-		
+		body.take_damage(final_damage)
+
+func update_attack_speed():
+	# Get player stats for attack speed multiplier
+	var player = get_tree().get_first_node_in_group("player")
+	var attack_speed_multiplier = 1.0
+	if player and player.get_node_or_null("PlayerStats"):
+		attack_speed_multiplier = player.get_node("PlayerStats").get_attack_speed_multiplier()
+
+	# Update timer wait time (higher attack speed = lower cooldown)
+	var new_cooldown = cooldown / attack_speed_multiplier
+	damage_timer.wait_time = new_cooldown

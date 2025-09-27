@@ -1,0 +1,93 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpausemenu123"]
+
+[ext_resource type="Script" uid="uid://bgrwxhyb8b47y" path="res://scripts/PauseMenu.gd" id="1_pausemenu"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+visible = false
+script = ExtResource("1_pausemenu")
+
+[node name="MainControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="MainControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="MainHBox" type="HBoxContainer" parent="MainControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -175.0
+offset_right = 400.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuContainer" type="VBoxContainer" parent="MainControl/MainHBox"]
+custom_minimum_size = Vector2(400, 350)
+layout_mode = 2
+
+[node name="PauseTitle" type="Label" parent="MainControl/MainHBox/MenuContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "PAUSED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer1" type="Control" parent="MainControl/MainHBox/MenuContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="MainControl/MainHBox/MenuContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "RESUME"
+
+[node name="Spacer2" type="Control" parent="MainControl/MainHBox/MenuContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="MainMenuButton" type="Button" parent="MainControl/MainHBox/MenuContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "MAIN MENU"
+
+[node name="StatsContainer" type="VBoxContainer" parent="MainControl/MainHBox"]
+custom_minimum_size = Vector2(400, 350)
+layout_mode = 2
+
+[node name="StatsTitle" type="Label" parent="MainControl/MainHBox/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "PLAYER STATS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatsSpacer" type="Control" parent="MainControl/MainHBox/StatsContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="StatsContent" type="VBoxContainer" parent="MainControl/MainHBox/StatsContainer"]
+layout_mode = 2
+
+[connection signal="pressed" from="MainControl/MainHBox/MenuContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="MainControl/MainHBox/MenuContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

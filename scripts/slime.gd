@@ -23,14 +23,21 @@ var hp_bar_container: Control
 var attack_timer = 0.0
 var can_attack = true
 
+# Drop chances - imported from item scripts
+@export var health_heart_drop_chance: float = HealthHeart.new().drop_chance
+
+
 func _ready() -> void:
+	# Set pause mode to stop processing when game is paused
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+
 	# Add this slime to the "slimes" group so player can find it
 	add_to_group("slimes")
-	
+
 	# Setup animation
 	if animated_sprite:
 		animated_sprite.play()
-	
+
 	# Create HP bar
 	create_hp_bar()
 	update_hp_bar()
@@ -125,6 +132,10 @@ func die():
 	# Drop XP orb
 	drop_xp_orb()
 
+	# Check for health heart drop
+	if randf() <= health_heart_drop_chance:
+		drop_health_heart()
+
 	# Optional: Drop items, play death animation, etc.
 	# $AnimationPlayer.play("death")  # if you have death animation
 	# spawn_loot()  # if you want to drop items
@@ -142,6 +153,19 @@ func drop_xp_orb():
 
 	# Add to scene
 	get_parent().add_child(xp_orb)
+
+func drop_health_heart():
+	# Create health heart
+	var health_heart = Area2D.new()
+	health_heart.set_script(load("res://scripts/health_heart.gd"))
+
+	# Position heart at slime's location
+	health_heart.global_position = global_position
+
+	# Add to scene
+	get_parent().add_child(health_heart)
+
+	print("Health heart dropped!")
 
 func update_animation(direction: Vector2) -> void:
 	if not animated_sprite:

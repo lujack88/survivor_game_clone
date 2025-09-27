@@ -11,13 +11,16 @@ var direction: Vector2
 var damage_text_scene = preload("res://scripts/damagetext.gd")
 
 func _ready():
+	# Set pause mode to stop processing when game is paused
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+
 	# Set up collision detection
 	collision_layer = 0  # Projectile doesn't collide with anything
 	collision_mask = 2   # Detect enemies (layer 1)
-	
+
 	# Create visual representation
 	create_visual()
-	
+
 	# Auto-destroy after lifetime
 	var timer = Timer.new()
 	timer.wait_time = lifetime

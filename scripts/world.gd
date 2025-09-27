@@ -11,10 +11,46 @@ extends Node2D
 # Internal spawner variables
 var spawn_timer: Timer
 
+# Pause/Menu variables
+var is_paused: bool = false
+var pause_menu: PauseMenu
+var pause_menu_scene = preload("res://scenes/PauseMenu.tscn")
+
 func _ready():
+	# Allow this node to process input always (including when paused for ESC key)
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# Ensure game starts unpaused
+	get_tree().paused = false
+
 	# Spawning now handled by EntitySpawner node
 	# setup_spawner()
-	pass
+	create_pause_menu()
+
+func _input(event):
+	if event.is_action_pressed("pause_menu"):
+		toggle_pause()
+
+func create_pause_menu():
+	# Instantiate the pause menu scene
+	pause_menu = pause_menu_scene.instantiate()
+	pause_menu.set_world_reference(self)
+	add_child(pause_menu)
+
+func toggle_pause():
+	is_paused = !is_paused
+
+	# Only pause the game when showing the pause menu
+	if is_paused:
+		pause_menu.show_menu()
+		get_tree().paused = true
+	else:
+		pause_menu.hide_menu()
+		get_tree().paused = false
+
+func go_to_main_menu():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func setup_spawner():
 	# Create and configure the spawn timer

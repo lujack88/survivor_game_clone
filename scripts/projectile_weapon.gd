@@ -11,12 +11,17 @@ var fire_timer: Timer
 var can_fire = true
 
 func _ready():
+	# Set pause mode to stop processing when game is paused
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+
 	# Create fire timer
 	fire_timer = Timer.new()
-	fire_timer.wait_time = cooldown
 	fire_timer.timeout.connect(_on_fire_timer_timeout)
 	add_child(fire_timer)
-	
+
+	# Set initial cooldown with attack speed consideration
+	update_attack_speed()
+
 	# Start auto-firing
 	fire_timer.start()
 
@@ -68,9 +73,15 @@ func fire_at_target(target_enemy):
 	# Add to scene
 	get_tree().current_scene.add_child(projectile)
 	
+	# Get player stats for damage multiplier
+	var player = get_tree().get_first_node_in_group("player")
+	var damage_multiplier = 1.0
+	if player and player.get_node_or_null("PlayerStats"):
+		damage_multiplier = player.get_node("PlayerStats").get_damage_multiplier()
+
 	# Setup projectile
 	projectile.setup_projectile(player_pos, direction_to_target)
-	projectile.damage = damage
+	projectile.damage = damage * damage_multiplier
 	projectile.speed = projectile_speed
 	
 	# Start cooldown
@@ -94,9 +105,15 @@ func fire_projectile():
 	# Add to scene
 	get_tree().current_scene.add_child(projectile)
 	
+	# Get player stats for damage multiplier
+	var player2 = get_tree().get_first_node_in_group("player")
+	var damage_multiplier2 = 1.0
+	if player2 and player2.get_node_or_null("PlayerStats"):
+		damage_multiplier2 = player2.get_node("PlayerStats").get_damage_multiplier()
+
 	# Setup projectile
 	projectile.setup_projectile(player_pos, player_direction)
-	projectile.damage = damage
+	projectile.damage = damage * damage_multiplier2
 	projectile.speed = projectile_speed
 	
 	# Start cooldown
@@ -114,3 +131,14 @@ func get_player_direction() -> Vector2:
 
 func _on_fire_timer_timeout():
 	can_fire = true
+
+func update_attack_speed():
+	# Get player stats for attack speed multiplier
+	var player = get_tree().get_first_node_in_group("player")
+	var attack_speed_multiplier = 1.0
+	if player and player.get_node_or_null("PlayerStats"):
+		attack_speed_multiplier = player.get_node("PlayerStats").get_attack_speed_multiplier()
+
+	# Update timer wait time (higher attack speed = lower cooldown)
+	var new_cooldown = cooldown / attack_speed_multiplier
+	fire_timer.wait_time = new_cooldown

@@ -67,6 +67,9 @@ func check_level_up():
 func perform_level_up():
 	current_level += 1
 
+	# Apply stat increases (25% increase to all stats)
+	apply_level_up_stats()
+
 	# Emit level up signal
 	level_up.emit(current_level)
 
@@ -76,5 +79,35 @@ func perform_level_up():
 func show_level_up_effect():
 	# Level up effect now handled by HUD
 	pass
+
+func apply_level_up_stats():
+	# Get the player and their stats system
+	var player = get_tree().get_first_node_in_group("player")
+	if player and player.get_node_or_null("PlayerStats"):
+		var player_stats = player.get_node("PlayerStats")
+
+		# Apply 25% increase to all stats (0.25 = 25% increase)
+		player_stats.add_damage(0.25)
+		player_stats.add_attack_speed(0.25)
+		player_stats.add_armor(0.05)  # 5% armor increase (since armor is percentage-based)
+		player_stats.add_max_hp(0.25)
+
+		# Update weapon attack speeds to reflect new stats
+		update_weapon_attack_speeds()
+
+		print("Level up! Stats increased - Level: ", current_level)
+
+func update_weapon_attack_speeds():
+	# Update all weapon attack speeds to use new stats
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		# Find and update garlic weapon
+		for child in player.get_children():
+			if child.get_script() and child.get_script().get_path().ends_with("garlic.gd"):
+				if child.has_method("update_attack_speed"):
+					child.update_attack_speed()
+			elif child.get_script() and child.get_script().get_path().ends_with("projectile_weapon.gd"):
+				if child.has_method("update_attack_speed"):
+					child.update_attack_speed()
 
 # XP bar functions removed - now handled by HUD
