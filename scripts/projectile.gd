@@ -41,7 +41,7 @@ func create_visual():
 	collision_shape.shape = circle_shape
 	add_child(collision_shape)
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	# Move in the set direction
 	velocity = direction * speed
 	move_and_slide()

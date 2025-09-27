@@ -118,9 +118,9 @@ func die():
 	print("Slime died!")
 	
 	# Give XP to player
-	var player = get_tree().get_first_node_in_group("player")
-	if player and player.has_method("give_xp"):
-		player.give_xp(5)  # 5 XP per slime kill
+	var player_node = get_tree().get_first_node_in_group("player")
+	if player_node and player_node.has_method("give_xp"):
+		player_node.give_xp(5)  # 5 XP per slime kill
 	
 	# Optional: Drop items, play death animation, etc.
 	# $AnimationPlayer.play("death")  # if you have death animation

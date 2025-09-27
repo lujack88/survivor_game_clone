@@ -10,7 +10,6 @@ var damage_timer: Timer
 var area_2d: Area2D
 var collision_shape: CollisionShape2D
 var circle_shape: CircleShape2D
-var redraw_timer: Timer
 func _ready():
 	# Create the Area2D for detection
 	area_2d = Area2D.new()
@@ -36,17 +35,13 @@ func _ready():
 	
 	# Update radius
 	circle_shape.radius = radius
-	
-		# Create high-frequency redraw timer
-	redraw_timer = Timer.new()
-	redraw_timer.wait_time = 0.003333  # 3.33ms = 300 times per second
-	redraw_timer.timeout.connect(_on_redraw_timer)
-	redraw_timer.autostart = true
-	add_child(redraw_timer)
 
 func _process(_delta):
-	# Follow the player position
-	global_position = Player.global_position_ref
+	# Get player directly for immediate position updates
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		global_position = player.global_position
+	queue_redraw()  # Redraw every frame for smooth tracking
 	
 func _draw():
 	# Draw dark grey semi-transparent circle
@@ -60,5 +55,3 @@ func _on_damage_timer_timeout():
 	for body in bodies_in_area:
 		body.take_damage(dmg)
 		
-func _on_redraw_timer():
-	queue_redraw()

@@ -87,7 +87,7 @@ func show_level_up_effect():
 	level_text.position = player_pos + Vector2(-50, -60)
 	
 	# Add to scene
-	get_tree().current_scene.add_child(level_text)
+	get_tree().current_scene.add_child.call_deferred(level_text)
 	
 	# Animate and remove after 2 seconds
 	var tween = create_tween()
@@ -101,7 +101,7 @@ func create_xp_bar():
 	xp_bar_container.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 	xp_bar_container.position = Vector2(-50, -60)  # Position above HP bar
 	xp_bar_container.size = Vector2(100, 8)
-	get_tree().current_scene.add_child(xp_bar_container)
+	get_tree().current_scene.add_child.call_deferred(xp_bar_container)
 	
 	# Create background (dark for unfilled XP)
 	xp_bar_background = ColorRect.new()
@@ -123,7 +123,7 @@ func create_xp_bar():
 	xp_text.position = Vector2(-50, -75)
 	xp_text.add_theme_font_size_override("font_size", 12)
 	xp_text.modulate = Color.WHITE
-	get_tree().current_scene.add_child(xp_text)
+	get_tree().current_scene.add_child.call_deferred(xp_text)
 
 func update_xp_bar():
 	if not xp_bar_fill or not xp_text:
