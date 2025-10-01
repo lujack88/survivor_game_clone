@@ -66,7 +66,7 @@ func fire_at_target(target_enemy):
 	var direction_to_target = (target_enemy.global_position - player_pos).normalized()
 	
 	# Create projectile
-	var projectile_scene = preload("res://scripts/projectile.gd")
+	var projectile_scene = preload("res://scripts/weapons/projectile.gd")
 	var projectile = CharacterBody2D.new()
 	projectile.set_script(projectile_scene)
 	
@@ -98,7 +98,7 @@ func fire_projectile():
 	var player_direction = get_player_direction()
 	
 	# Create projectile
-	var projectile_scene = preload("res://scripts/projectile.gd")
+	var projectile_scene = preload("res://scripts/weapons/projectile.gd")
 	var projectile = CharacterBody2D.new()
 	projectile.set_script(projectile_scene)
 	

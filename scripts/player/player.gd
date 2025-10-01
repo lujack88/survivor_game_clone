@@ -15,7 +15,7 @@ static var global_position_ref: Vector2
 
 
 # Damage text variables
-var damage_text_scene = preload("res://scripts/damagetext.gd")
+var damage_text_scene = preload("res://scripts/ui/damagetext.gd")
 
 # Signals for HUD
 signal health_changed(current_health: int, max_health: int)
@@ -72,12 +72,12 @@ func _ready() -> void:
 		animated_sprite.play()
 		# Create and add garlic weapon directly
 	var garlic_weapon = Node2D.new()
-	garlic_weapon.set_script(load("res://scripts/garlic.gd"))
+	garlic_weapon.set_script(load("res://scripts/weapons/garlic.gd"))
 	add_child(garlic_weapon)
 
 	# Create and add projectile weapon
 	var projectile_weapon = Node2D.new()
-	projectile_weapon.set_script(load("res://scripts/projectile_weapon.gd"))
+	projectile_weapon.set_script(load("res://scripts/weapons/projectile_weapon.gd"))
 	add_child(projectile_weapon)
 	
 	

@@ -8,7 +8,7 @@ class_name Projectile
 @export var lifetime: float = 3.0
 
 var direction: Vector2
-var damage_text_scene = preload("res://scripts/damagetext.gd")
+var damage_text_scene = preload("res://scripts/ui/damagetext.gd")
 
 func _ready():
 	# Set pause mode to stop processing when game is paused

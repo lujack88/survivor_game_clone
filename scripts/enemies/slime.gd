@@ -11,8 +11,13 @@ const IDLE_THRESHOLD = 5.0
 @export var attack_radius = 20
 # Player reference - will be set in _ready()
 
+# Preloaded resources
+var damage_text_scene = preload("res://scripts/ui/damagetext.gd")
+var xp_orb_script = preload("res://scripts/pickups/xp_orb.gd")
+var health_heart_script = preload("res://scripts/pickups/health_heart.gd")
+var magnet_drop_script = preload("res://scripts/pickups/magnet_drop.gd")
+
 # Health system
-var damage_text_scene = preload("res://scripts/damagetext.gd")
 @export var health = 30
 @export var max_health = 30
 var hp_bar_background: ColorRect
@@ -25,6 +30,7 @@ var can_attack = true
 
 # Drop chances - imported from item scripts
 @export var health_heart_drop_chance: float = HealthHeart.new().drop_chance
+@export var magnet_drop_chance: float = MagnetDrop.new().drop_chance
 
 
 func _ready() -> void:
@@ -136,6 +142,10 @@ func die():
 	if randf() <= health_heart_drop_chance:
 		drop_health_heart()
 
+	# Check for magnet drop
+	if randf() <= magnet_drop_chance:
+		drop_magnet()
+
 	# Optional: Drop items, play death animation, etc.
 	# $AnimationPlayer.play("death")  # if you have death animation
 	# spawn_loot()  # if you want to drop items
@@ -146,7 +156,7 @@ func die():
 func drop_xp_orb():
 	# Create XP orb
 	var xp_orb = Area2D.new()
-	xp_orb.set_script(load("res://scripts/xp_orb.gd"))
+	xp_orb.set_script(xp_orb_script)
 
 	# Position orb at slime's location
 	xp_orb.global_position = global_position
@@ -157,7 +167,7 @@ func drop_xp_orb():
 func drop_health_heart():
 	# Create health heart
 	var health_heart = Area2D.new()
-	health_heart.set_script(load("res://scripts/health_heart.gd"))
+	health_heart.set_script(health_heart_script)
 
 	# Position heart at slime's location
 	health_heart.global_position = global_position
@@ -166,6 +176,19 @@ func drop_health_heart():
 	get_parent().add_child(health_heart)
 
 	print("Health heart dropped!")
+
+func drop_magnet():
+	# Create magnet drop
+	var magnet_drop = Area2D.new()
+	magnet_drop.set_script(magnet_drop_script)
+
+	# Position magnet at slime's location
+	magnet_drop.global_position = global_position
+
+	# Add to scene
+	get_parent().add_child(magnet_drop)
+
+	print("Magnet dropped!")
 
 func update_animation(direction: Vector2) -> void:
 	if not animated_sprite:

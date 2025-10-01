@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://60si6ucpvv58" path="res://scripts/world.gd" id="1_qfnet"]
 [ext_resource type="Texture2D" uid="uid://byiaw74qu0mh1" path="res://assets/sprites/objects/objects.png" id="2_rwgxs"]
 [ext_resource type="PackedScene" uid="uid://co1l73glkkfas" path="res://scenes/player.tscn" id="3_4wyf3"]
-[ext_resource type="Script" uid="uid://cxolqb43t772d" path="res://scripts/entityspawner.gd" id="4_spawner"]
+[ext_resource type="Script" uid="uid://cxolqb43t772d" path="res://scripts/enemies/entityspawner.gd" id="4_spawner"]
 [ext_resource type="PackedScene" uid="uid://citi44nhbxj1e" path="res://scenes/HUD.tscn" id="5_hud"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rwgxs"]

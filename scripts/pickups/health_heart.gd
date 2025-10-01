@@ -5,7 +5,7 @@ class_name HealthHeart
 # Heart properties
 @export var heal_percentage: float = 0.15  # 15% of max health
 @export var pickup_radius: float = 0.5  # Very small collision hitbox
-@export var drop_chance: float = 0.01 	# 1% drop chance
+@export var drop_chance: float = 0.05 	# 5% drop chance
 @export var magnet_range: float = 80.0  # Range where heart is attracted to player
 
 # Visual and physics
