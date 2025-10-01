@@ -44,69 +44,11 @@ func _ready():
 	# No auto-destroy timer - hearts persist until picked up
 
 func create_visual():
-	# Create heart sprite
+	# Create heart sprite with PNG texture
 	sprite = Sprite2D.new()
-
-	# Try to load external heart image first
-	var heart_texture = load("res://assets/sprites/objects/heart_pixel.png")
-	if heart_texture:
-		# Use external pixel art heart
-		sprite.texture = heart_texture
-
+	sprite.texture = load("res://assets/sprites/objects/heart_pixel.png")
 	sprite.scale = Vector2(heart_scale, heart_scale)
 	add_child(sprite)
-
-func draw_heart_shape(image):
-	var size = 32
-	var center_x = size / 2.0
-	var center_y = size / 2.0
-	
-	for x in range(size):
-		for y in range(size):
-			var pixel = Vector2(x, y)
-			
-			# Heart shape calculation
-			if is_heart_pixel(pixel, center_x, center_y):
-				var distance = pixel.distance_to(Vector2(center_x, center_y))
-				var normalized_distance = distance / (size / 2.0)
-				
-				# Create gradient from center to edge
-				if normalized_distance <= 0.3:
-					# Core - bright red
-					image.set_pixel(x, y, Color(1.0, 0.2, 0.2, 0.95))
-				elif normalized_distance <= 0.5:
-					# Mid - medium red
-					image.set_pixel(x, y, Color(0.9, 0.1, 0.1, 0.9))
-				elif normalized_distance <= 0.7:
-					# Edge - darker red
-					image.set_pixel(x, y, Color(0.8, 0.0, 0.0, 0.8))
-				else:
-					# Outline - dark red
-					image.set_pixel(x, y, Color(0.6, 0.0, 0.0, 0.7))
-				
-				# Add highlight
-				if is_heart_highlight(pixel, center_x, center_y):
-					image.set_pixel(x, y, Color(1.0, 0.6, 0.6, 1.0))
-
-func is_heart_pixel(pixel: Vector2, center_x: float, center_y: float) -> bool:
-	var x = pixel.x - center_x
-	var y = pixel.y - center_y
-	
-	# Heart equation: (x² + y² - 1)³ ≤ x²y³
-	# Simplified for pixel art
-	var heart_value = pow(x * x + y * y - 1, 3) - x * x * y * y * y
-	
-	# Scale for pixel size
-	heart_value *= 0.1
-	
-	return heart_value <= 0
-
-func is_heart_highlight(pixel: Vector2, center_x: float, center_y: float) -> bool:
-	var x = pixel.x - center_x
-	var y = pixel.y - center_y
-	
-	# Highlight in upper left area of heart
-	return x < -2 and y < -3 and x > -6 and y > -8
 
 func start_animations():
 	# Store base position for floating animation
