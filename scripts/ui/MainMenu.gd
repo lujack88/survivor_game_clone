@@ -8,7 +8,7 @@ func _ready():
 
 func _on_play_button_pressed():
 	# Load the main game scene
-	get_tree().change_scene_to_file("res://scenes/world.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_exit_button_pressed():
 	# Exit the game
