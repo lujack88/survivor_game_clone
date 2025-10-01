@@ -23,6 +23,9 @@ var base_y_position: float
 var velocity: Vector2 = Vector2.ZERO
 
 func _ready():
+	# Add to xp_orbs group for magnet pickup
+	add_to_group("xp_orbs")
+
 	# Set up collision detection for player pickup
 	collision_layer = 0    # This orb doesn't block anything
 	collision_mask = 1     # Detect player on layer 1 (player layer)
@@ -157,6 +160,10 @@ func start_magnetism():
 	tween.set_loops()
 	tween.tween_method(_animate_pulse, 1.0, 1.4, 0.3)
 	tween.tween_method(_animate_pulse, 1.4, 1.0, 0.3)
+
+# Public method for magnet pickup to force magnetism
+func force_magnetize():
+	start_magnetism()
 
 # stop_magnetism() removed - orbs stay magnetized once activated
 
