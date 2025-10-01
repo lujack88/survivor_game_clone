@@ -2,7 +2,7 @@ extends Node2D
 
 # Weapon properties
 @export var damage: float = 15.0
-@export var cooldown: float = 0.5  # Changed to 1 second for auto-fire
+@export var cooldown: float = 1.0  # Changed to 1 second for auto-fire
 @export var projectile_speed: float = 300.0
 @export var auto_target_range: float = 300.0  # Range for auto-targeting
 

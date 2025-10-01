@@ -2,7 +2,7 @@ extends Node2D
 
 # Export variables for easy tweaking in the editor
 @export var dmg: float = 10.0
-@export var cooldown: float = 0.5
+@export var cooldown: float = 0.75
 @export var radius: float = 100.0
 
 # Internal variables

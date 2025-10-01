@@ -4,8 +4,10 @@ class_name MagnetDrop
 
 # Magnet properties
 @export var pickup_radius: float = 30.0
-@export var drop_chance: float = 0.05  # 5% drop chance (rare and powerful!)
+@export var drop_chance: float = 0.01  # 1% chance to drop on enemy death
 @export var magnet_range: float = 80.0  # Range where magnet is attracted to player
+@export var pickup_range_increase: float = 15000.0  # How much to increase player's pickup range
+@export var effect_duration: float = 1.0  # How long the effect lasts in seconds
 
 # Visual and physics
 var sprite: Sprite2D
@@ -158,34 +160,27 @@ func _pickup_magnet(player):
 	pickup_tween.tween_callback(_finalize_pickup.bind(player))
 
 func _finalize_pickup(player):
-	# Vampire Survivors style: Instantly magnetize ALL XP orbs on screen!
-	magnetize_all_xp_orbs()
+	# Apply pickup range boost to player
+	apply_pickup_range_boost(player)
 
-	print("MAGNET! All XP orbs are being attracted!")
-
-	# Wait a frame before removing to ensure all orbs are processed
-	await get_tree().process_frame
+	print("Magnet used! Player pickup range increased by ", pickup_range_increase, " for ", effect_duration, " seconds")
 
 	# Remove the magnet
 	queue_free()
 
-func magnetize_all_xp_orbs():
-	# Find all XP orbs in the scene
-	var all_xp_orbs = get_tree().get_nodes_in_group("xp_orbs")
+func apply_pickup_range_boost(player):
+	# Check if player has a pickup range boost system
+	if player.has_method("apply_pickup_range_boost"):
+		player.apply_pickup_range_boost(pickup_range_increase, effect_duration)
+	else:
+		# Fallback: add the boost system if it doesn't exist
+		add_pickup_boost_to_player(player)
 
-	print("🧲 MAGNET ACTIVATED! Found ", all_xp_orbs.size(), " XP orbs to magnetize!")
+func add_pickup_boost_to_player(player):
+	# Create a temporary effect node to handle the pickup range boost
+	var boost_effect = Node.new()
+	boost_effect.name = "PickupRangeBoost"
+	boost_effect.set_script(preload("res://scripts/pickups/pickup_range_boost.gd"))
 
-	var magnetized_count = 0
-	# Force every orb to become magnetized instantly
-	for orb in all_xp_orbs:
-		if orb and is_instance_valid(orb):
-			# Force magnetism on this orb
-			if orb.has_method("force_magnetize"):
-				orb.force_magnetize()
-				magnetized_count += 1
-			else:
-				# Fallback: directly set magnetized state
-				orb.is_magnetized = true
-				magnetized_count += 1
-
-	print("✅ Successfully magnetized ", magnetized_count, " / ", all_xp_orbs.size(), " orbs!")
+	player.add_child(boost_effect)
+	boost_effect.apply_boost(pickup_range_increase, effect_duration)

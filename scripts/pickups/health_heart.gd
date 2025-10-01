@@ -4,7 +4,7 @@ class_name HealthHeart
 
 # Heart properties
 @export var heal_percentage: float = 0.15  # 15% of max health
-@export var pickup_radius: float = 0.5  # Very small collision hitbox
+@export var pickup_radius: float = 10.0  # Pickup collision radius
 @export var drop_chance: float = 0.05 	# 5% drop chance
 @export var magnet_range: float = 80.0  # Range where heart is attracted to player
 
@@ -23,7 +23,7 @@ var heart_scale: float = 0.5
 func _ready():
 	# Set up collision detection
 	collision_layer = 0  # Heart doesn't collide with anything
-	collision_mask = 0   # Heart doesn't detect collisions automatically
+	collision_mask = 1   # Detect player on layer 1
 
 	# Connect signals
 	body_entered.connect(_on_body_entered)
@@ -52,20 +52,6 @@ func create_visual():
 	if heart_texture:
 		# Use external pixel art heart
 		sprite.texture = heart_texture
-	else:
-		# Temporary: use chest sprite as heart placeholder
-		var temp_texture = load("res://assets/sprites/objects/chest_01.png")
-		if temp_texture:
-			sprite.texture = temp_texture
-			sprite.modulate = Color.RED  # Tint it red to look more like a heart
-			return
-		# Fallback to generated heart
-		var image = Image.create(32, 32, false, Image.FORMAT_RGBA8)
-		image.fill(Color.TRANSPARENT)
-		draw_heart_shape(image)
-		var texture = ImageTexture.new()
-		texture.set_image(image)
-		sprite.texture = texture
 
 	sprite.scale = Vector2(heart_scale, heart_scale)
 	add_child(sprite)
